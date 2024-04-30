@@ -5,7 +5,7 @@ class Book:
         self.rating = rating
         self.genre = genre
         self.pages = pages
-        self.synopsis = synopsis
+        self.synopsis = synopsis  # Initializes the Book object with provided attributes.
 
     def __repr__(self):
         return f"{self.title} by {self.author}, Rating: {self.rating}, Genre: {self.genre}, Pages: {self.pages}"

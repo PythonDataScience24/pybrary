@@ -3,10 +3,10 @@ from book import Book
 
 class Library:
     def __init__(self):
-        self.books = []
+        self.books = []  # Initializes a new empty list to store books.
 
     def add_book(self, book):
-        self.books.append(book)
+        self.books.append(book)  # Adds a book object to the list of books.
 
     def list_books(self):
         for book in self.books:
@@ -21,6 +21,7 @@ if __name__ == "__main__":
         if action == 'quit':
             break
         elif action == 'add':
+            # Prompts the user for book details, creates a new Book object, and adds it to the library.
             title = input("Enter title: ")
             author = input("Enter author: ")
             rating = float(input("Enter rating: "))
@@ -30,4 +31,4 @@ if __name__ == "__main__":
             book = Book(title, author, rating, genre, pages, synopsis)
             library.add_book(book)
         elif action == 'list':
-            library.list_books()
+            library.list_books()  # Lists all books currently stored in the library.
