@@ -73,4 +73,4 @@ We welcome pull requests from contributors. Please follow these steps to submit 
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the license described under [LICENSE.md](LICENSE.md).
+By contributing to this project, you agree that your contributions will be licensed under the license described under [LICENSE](LICENSE).
