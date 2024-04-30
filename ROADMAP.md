@@ -22,7 +22,7 @@ These are features we will strive for, should the main goals be completed ahead 
 - Implement intelligent recommendations through said database.
 
 ## Contributing
-Refer to [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](code_of_conduct.md) before contributing. For a more detailed breakdown of tasks to be completed, check the [project board](https://github.com/users/glowseeker/projects/2/views/1).
+Refer to [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](code_of_conduct.md) before contributing. For a more detailed breakdown of tasks to be completed, check the [project board](https://github.com/orgs/PythonDataScience24/projects/2).
 
 ## Contact
 Get in touch with the [team](README.md#authors).
