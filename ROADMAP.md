@@ -1,7 +1,7 @@
 # Project Roadmap
 
 ## Introduction
-This roadmap is to show the progress roadmap of PyBrary. Note that while this roadmap isn't final, the repository's [project board](https://github.com/users/glowseeker/projects/2/views/1) on GitHub will show a more up-to-date status of progress.
+This roadmap is to show the progress roadmap of PyBrary. Note that while this roadmap isn't final, the repository's [project board](https://github.com/orgs/PythonDataScience24/projects/2) on GitHub will show a more up-to-date status of progress.
 
 ## Main Goals
 These are the main features of the project that should cover the basis:
