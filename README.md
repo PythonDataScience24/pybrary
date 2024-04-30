@@ -1,11 +1,13 @@
 
-# pybrary
+# pybrary 📚
 
-Welcome to the repository of your new library manager pybrary!
+Welcome to the pybrary repository, we thank you in advance for reading this README to get to know this project! 💟📖
 
-We thank you in advance for reading this README to get to know this project!
+Pybrary is a Python-based library management system designed to streamline daily operations in libraries. Whether you’re a librarian or a book enthusiast, this project aims to simplify tasks such as cataloging and managing your books.
 
 ![Logo](pybrary.png)
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Features
 
