@@ -58,4 +58,4 @@ If you have any feedback, please reach out to any of the [authors](#Authors).
 
 ## License
 
-Please refer to [LICENSE.md](LICENSE.md)
+Please refer to [LICENSE](LICENSE)
