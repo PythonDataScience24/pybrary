@@ -26,7 +26,7 @@ Pybrary is python applet written to help you manage your library of books. It wi
 
 ## Roadmap
 
-Please refer to the [roadmap](roadmap.md) for additional information.
+Please refer to the [roadmap](ROADMAP.md) for additional information.
 
 
 ## Documentation
