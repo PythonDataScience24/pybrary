@@ -46,7 +46,7 @@ def add_book(event):
     # Add new row to table
     full_library.append([title, author, year, genre, pages, rating, synopsis])
 
-    clear_fields()
+    clear_fields(event)
     save_data()
     
 def delete_book(event):
@@ -55,6 +55,7 @@ def delete_book(event):
     if selected_row:
         full_library.remove(selected_row)
         save_data()
+        clear_fields(event)
 
 def save_data():
     try:
