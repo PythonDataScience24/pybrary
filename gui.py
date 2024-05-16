@@ -10,21 +10,7 @@ class LibraryGUI:
         self.tab1 = gp.Tab(self.tabs, 'View Collection')
         self.tab2 = gp.Tab(self.tabs, 'Visualization')
 
-        self.setup_tab1()
-        self.setup_tab2()
-
-        self.tabs.add(self.tab1)
-        self.tabs.add(self.tab2)
-
-        self.app.set_grid(1, 1)
-        self.app.add(self.tabs, 1, 1, fill=True, stretch=True)
-
-        self.load_data()
-
-    def setup_tab1(self):
-        self.tab1.set_grid(6, 4)
-
-        # Create input fields for book details
+        # Define instance attributes
         self.title_lbl = gp.Label(self.tab1, 'Title:')
         self.title_inp = gp.Input(self.tab1)
         self.author_lbl = gp.Label(self.tab1, 'Author:')
@@ -40,6 +26,29 @@ class LibraryGUI:
         self.synopsis_container = gp.LabelContainer(self.tab1, 'Synopsis:')
         self.synopsis_container.set_grid(1, 1)
         self.synopsis_inp = gp.Textbox(self.synopsis_container, 70)
+
+        self.table = gp.Table(self.tab1, ['Title', 'Author', 'Year', 'Genre', 'Pages', 'Rating', 'Synopsis'])
+        self.table.set_column_widths(60, 60, 60, 60, 60, 60, 60)
+        self.table.height = 5
+
+        self.add_btn = gp.Button(self.tab1, 'Add Book', self.add_book)
+        self.delete_btn = gp.Button(self.tab1, 'Delete Book', self.delete_book)
+        self.search_btn = gp.Button(self.tab1, 'Search', self.search)
+        self.clear_btn = gp.Button(self.tab1, 'Clear Fields', self.clear_fields)
+
+        self.setup_tab1()
+        self.setup_tab2()
+
+        self.tabs.add(self.tab1)
+        self.tabs.add(self.tab2)
+
+        self.app.set_grid(1, 1)
+        self.app.add(self.tabs, 1, 1, fill=True, stretch=True)
+
+        self.load_data()
+
+    def setup_tab1(self):
+        self.tab1.set_grid(6, 4)
 
         # Add input fields to tab1
         self.tab1.add(self.title_lbl, 1, 1)
@@ -57,17 +66,8 @@ class LibraryGUI:
         self.tab1.add(self.synopsis_container, 4, 1, column_span=4)
         self.synopsis_container.add(self.synopsis_inp, 1, 1)
 
-        self.table = gp.Table(self.tab1, ['Title', 'Author', 'Year', 'Genre', 'Pages', 'Rating', 'Synopsis'])
-        self.table.set_column_widths(60, 60, 60, 60, 60, 60, 60)
-        self.table.height = 5
         self.table.add_event_listener('select', self.carry_over)
         self.tab1.add(self.table, 6, 1, column_span=4, fill=True, stretch=True)
-
-        # Create buttons
-        self.add_btn = gp.Button(self.tab1, 'Add Book', self.add_book)
-        self.delete_btn = gp.Button(self.tab1, 'Delete Book', self.delete_book)
-        self.search_btn = gp.Button(self.tab1, 'Search', self.search)
-        self.clear_btn = gp.Button(self.tab1, 'Clear Fields', self.clear_fields)
 
         # Add buttons to tab1
         self.tab1.add(self.clear_btn, 5, 1)
@@ -90,14 +90,27 @@ class LibraryGUI:
         self.load_data()
 
     def add_book(self, event):
-        book_details = [
-            self.title_inp.text, self.author_inp.text, self.year_inp.text, self.genre_inp.text,
-            self.pages_inp.text, self.rating_inp.text, self.synopsis_inp.text
-        ]
+        title = self.title_inp.text
+        author = self.author_inp.text
+        year = self.year_inp.text
+        genre = self.genre_inp.text
+        pages = self.pages_inp.text
+        rating = self.rating_inp.text
+        synopsis = self.synopsis_inp.text
 
-        if any(book_details):
-            self.library_manager.add_book(book_details)
-            self.clear_fields()
+        if not (title or author or year or pages or genre or rating or synopsis.strip()):
+            return
+
+        # Validate numeric inputs
+        if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
+            gp.easygui.message("Invalid input in Year, Page Count, or Rating. Please enter valid numbers.",
+                               "Input Error")
+            return
+
+        book_details = [title, author, year, genre, pages, rating, synopsis]
+
+        self.library_manager.add_book(book_details)
+        self.clear_fields()
 
     def delete_book(self, event):
         selected_row = self.table.selected
@@ -131,3 +144,19 @@ class LibraryGUI:
         self.table.clear()
         for row in self.library_manager.full_library:
             self.table.add_row(row)
+
+    @staticmethod
+    def is_valid_int(value):
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def is_valid_float(value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
