@@ -1,10 +1,26 @@
+"""
+GUI module for the pybrary application
+"""
+
 import gooeypie as gp
 import csv
 from popup import Popup
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 
 class LibraryGUI:
-    def __init__(self, app, library_manager):
-        self.app = app
+    """Handles the GUI for the library application."""
+
+    def __init__(self, main_app, library_manager):
+        """
+        Initializes the LibraryGUI with the given app and library manager.
+
+        Args:
+            pybary (GooeyPieApp): The main GooeyPie application.
+            library_manager (LibraryManager): The manager for the library data.
+        """
+        self.app = main_app
         self.library_manager = library_manager
 
         self.tabs = gp.TabContainer(self.app)
@@ -40,6 +56,10 @@ class LibraryGUI:
         self.search_btn = gp.Button(self.button_container, 'Search', self.search)
         self.clear_btn = gp.Button(self.button_container, 'Clear Fields', self.clear_fields)
 
+        self.visualize_btn_topic = gp.Button(self.tab2, 'Visualize by Topic', self.visualize_by_topic)
+        self.visualize_btn_rating = gp.Button(self.tab2, 'Visualize by Rating', self.visualize_by_rating)
+        self.visualize_btn_trends = gp.Button(self.tab2, 'Analyze Trends', self.analyze_trends)
+
         self.setup_tab1()
         self.setup_tab2()
 
@@ -52,6 +72,7 @@ class LibraryGUI:
         self.load_data()
 
     def setup_tab1(self):
+        """Sets up the View Collection tab."""
         self.tab1.set_grid(6, 4)
 
         # Add input fields to tab1
@@ -79,10 +100,87 @@ class LibraryGUI:
         self.tab1.add(self.table, 6, 1, column_span=4, fill=True, stretch=True)
 
     def setup_tab2(self):
-        self.tab2.set_grid(1, 1)
-        self.tab2.add(gp.Label(self.tab2, 'This is the second tab'), 1, 1, align='center', valign='middle')
+        """Sets up the Visualization tab."""
+        self.tab2.set_grid(4, 1)
+        self.tab2.add(gp.Label(self.tab2, 'Visualizations and Analysis'), 1, 1, align='center')
+        self.tab2.add(self.visualize_btn_topic, 2, 1, align='center')
+        self.tab2.add(self.visualize_btn_rating, 3, 1, align='center')
+        self.tab2.add(self.visualize_btn_trends, 4, 1, align='center')
+
+    def visualize_by_topic(self, event):
+        """Visualizes the book collection by topic (genre)."""
+        genres = {}
+        for book in self.library_manager.full_library:
+            genre = book[3]
+            if genre in genres:
+                genres[genre] += 1
+            else:
+                genres[genre] = 1
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(genres.keys(), genres.values(), color='skyblue')
+        plt.xlabel('Genre')
+        plt.ylabel('Number of Books')
+        plt.title('Number of Books by Genre')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def visualize_by_rating(self, event):
+        """Visualizes the book collection by rating."""
+        ratings = {}
+        for book in self.library_manager.full_library:
+            rating = book[5]
+            if rating in ratings:
+                ratings[rating] += 1
+            else:
+                ratings[rating] = 1
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(ratings.keys(), ratings.values(), color='lightgreen')
+        plt.xlabel('Rating')
+        plt.ylabel('Number of Books')
+        plt.title('Number of Books by Rating')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def analyze_trends(self, event):
+        """Analyzes trends in book ratings per author per year."""
+        author_year_rating = {}
+        for book in self.library_manager.full_library:
+            author = book[1]
+            year = book[2]
+            rating = float(book[5])
+            if (author, year) in author_year_rating:
+                author_year_rating[(author, year)].append(rating)
+            else:
+                author_year_rating[(author, year)] = [rating]
+
+        trends = {}
+        for key, ratings in author_year_rating.items():
+            trends[key] = sum(ratings) / len(ratings)
+
+        authors = list(set([key[0] for key in trends.keys()]))
+        years = list(set([key[1] for key in trends.keys()]))
+        authors.sort()
+        years.sort()
+
+        plt.figure(figsize=(12, 6))
+        for author in authors:
+            avg_ratings = [trends.get((author, year), 0) for year in years]
+            plt.plot(years, avg_ratings, marker='o', label=author)
+
+        plt.xlabel('Year')
+        plt.ylabel('Average Rating')
+        plt.title('Average Book Ratings per Author per Year')
+        plt.legend()
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
     def clear_fields(self, event=None):
+        """Clears the input fields."""
         self.title_inp.clear()
         self.author_inp.clear()
         self.year_inp.clear()
@@ -93,6 +191,7 @@ class LibraryGUI:
         self.load_data()
 
     def add_book(self, event):
+        """Adds a book to the library."""
         title = self.title_inp.text
         author = self.author_inp.text
         year = self.year_inp.text
@@ -101,7 +200,8 @@ class LibraryGUI:
         rating = self.rating_inp.text
         synopsis = self.synopsis_inp.text
 
-        if not (title or author or year or pages or genre or rating or synopsis.strip()):
+        if not (title and author and year and pages and genre and rating and synopsis.strip()):
+            Popup.show_error("All fields must be filled in.")
             return
 
         # Validate numeric inputs
@@ -149,6 +249,7 @@ class LibraryGUI:
             self.load_data()  
 
     def delete_book(self, event):
+        """Deletes a book from the library."""
         selected_index = self.table.selected_row
         if selected_index is not None:
             del self.library_manager.full_library[selected_index]
@@ -156,6 +257,7 @@ class LibraryGUI:
             self.load_data()
 
     def search(self, event):
+        """Searches for books in the library."""
         title_search = self.title_inp.text
         author_search = self.author_inp.text
         genre_search = self.genre_inp.text
@@ -167,6 +269,7 @@ class LibraryGUI:
             self.table.add_row(row)
 
     def carry_over(self, event):
+        """Carries over the selected book details to the input fields."""
         selected_row = self.table.selected
         if selected_row:
             self.title_inp.text = selected_row[0]
@@ -178,12 +281,14 @@ class LibraryGUI:
             self.synopsis_inp.text = selected_row[6]
 
     def load_data(self):
+        """Loads the library data into the table."""
         self.table.clear()
         for row in self.library_manager.full_library:
             self.table.add_row(row)
 
     @staticmethod
     def is_valid_int(value):
+        """Checks if the value is a valid integer."""
         try:
             int(value)
             return True
@@ -192,6 +297,7 @@ class LibraryGUI:
 
     @staticmethod
     def is_valid_float(value):
+        """Checks if the value is a valid float."""
         try:
             float(value)
             return True
@@ -199,6 +305,7 @@ class LibraryGUI:
             return False
 
     def save_data(self):
+        """Saves the library data to a CSV file."""
         try:
             with open('library.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
