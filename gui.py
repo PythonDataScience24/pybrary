@@ -6,8 +6,10 @@ import gooeypie as gp
 import csv
 from popup import Popup
 
+
 class LibraryGUI:
     """Handles the GUI for the library application."""
+
     def __init__(self, main_app, library_manager):
         """
         Initializes the LibraryGUI with the given app and library manager.
@@ -117,7 +119,8 @@ class LibraryGUI:
         rating = self.rating_inp.text
         synopsis = self.synopsis_inp.text
 
-        if not (title or author or year or pages or genre or rating or synopsis.strip()):
+        if not (title and author and year and pages and genre and rating and synopsis.strip()):
+            Popup.show_error("All fields must be filled in.")
             return
 
         # Validate numeric inputs

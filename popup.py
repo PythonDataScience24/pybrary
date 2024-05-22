@@ -11,7 +11,4 @@ class Popup:
         msg.align = 'center'
         popup.add(msg, 1, 1, align='center')
 
-        okay_btn = gp.Button(popup, 'Okay', lambda event: popup.destroy())
-        popup.add(okay_btn, 3, 1, align='right')
-
         popup.run()
