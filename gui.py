@@ -1,5 +1,6 @@
 import gooeypie as gp
 import csv
+from popup import Popup
 
 class LibraryGUI:
     def __init__(self, app, library_manager):
@@ -102,9 +103,17 @@ class LibraryGUI:
             return
 
         # Validate numeric inputs
-        if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
-            self.app.alert("Invalid input", "You've entered letters in Year, Page Count, or Rating. Please enter valid numbers.", "error")
-    
+        try:
+            if not self.is_valid_int(year):
+                raise ValueError("Invalid input: Please enter a valid integer for year.")
+            if not self.is_valid_int(pages):
+                raise ValueError("Invalid input: Please enter a valid integer for page count.")
+            if not self.is_valid_float(rating):
+                raise ValueError("Invalid input: Please enter a valid float for rating.")
+            if not (1 <= float(rating) <= 5):
+                raise ValueError("Invalid rating: Please enter a number between 1 and 5.")
+        except ValueError as e:
+            Popup.show_error(str(e))
             return
 
         book_details = [title, author, year, genre, pages, rating, synopsis]
