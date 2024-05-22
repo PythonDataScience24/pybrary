@@ -10,6 +10,11 @@ class LibraryManager:
         self.full_library.append(book_details)
         self.save_data()
 
+    def overwrite_book(self, book_details, index):
+        if index < len(self.full_library):
+            self.full_library[index] = book_details
+            self.save_data()
+
     def delete_book(self, book_details):
         if book_details in self.full_library:
             self.full_library.remove(book_details)

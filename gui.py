@@ -26,15 +26,18 @@ class LibraryGUI:
         self.synopsis_container = gp.LabelContainer(self.tab1, 'Synopsis:')
         self.synopsis_container.set_grid(1, 1)
         self.synopsis_inp = gp.Textbox(self.synopsis_container, 70)
+        self.button_container = gp.Container(self.tab1)
+        self.button_container.set_grid(1, 5)
 
         self.table = gp.Table(self.tab1, ['Title', 'Author', 'Year', 'Genre', 'Pages', 'Rating', 'Synopsis'])
         self.table.set_column_widths(60, 60, 60, 60, 60, 60, 60)
         self.table.height = 5
 
-        self.add_btn = gp.Button(self.tab1, 'Add Book', self.add_book)
-        self.delete_btn = gp.Button(self.tab1, 'Delete Book', self.delete_book)
-        self.search_btn = gp.Button(self.tab1, 'Search', self.search)
-        self.clear_btn = gp.Button(self.tab1, 'Clear Fields', self.clear_fields)
+        self.overwrite_btn = gp.Button(self.button_container, 'Overwrite Book', self.overwrite_book)
+        self.add_btn = gp.Button(self.button_container, 'Add Book', self.add_book)
+        self.delete_btn = gp.Button(self.button_container, 'Delete Book', self.delete_book)
+        self.search_btn = gp.Button(self.button_container, 'Search', self.search)
+        self.clear_btn = gp.Button(self.button_container, 'Clear Fields', self.clear_fields)
 
         self.setup_tab1()
         self.setup_tab2()
@@ -64,16 +67,15 @@ class LibraryGUI:
         self.tab1.add(self.rating_lbl, 3, 3)
         self.tab1.add(self.rating_inp, 3, 4)
         self.tab1.add(self.synopsis_container, 4, 1, column_span=4)
+        self.tab1.add(self.button_container, 5, 1, column_span=4)
         self.synopsis_container.add(self.synopsis_inp, 1, 1)
-
+        self.button_container.add(self.clear_btn, 1, 1)
+        self.button_container.add(self.search_btn, 1, 2)
+        self.button_container.add(self.add_btn, 1, 3)
+        self.button_container.add(self.delete_btn, 1, 4)
+        self.button_container.add(self.overwrite_btn, 1, 5)
         self.table.add_event_listener('select', self.carry_over)
         self.tab1.add(self.table, 6, 1, column_span=4, fill=True, stretch=True)
-
-        # Add buttons to tab1
-        self.tab1.add(self.clear_btn, 5, 1)
-        self.tab1.add(self.search_btn, 5, 2)
-        self.tab1.add(self.add_btn, 5, 3)
-        self.tab1.add(self.delete_btn, 5, 4)
 
     def setup_tab2(self):
         self.tab2.set_grid(1, 1)
@@ -111,6 +113,31 @@ class LibraryGUI:
 
         self.library_manager.add_book(book_details)
         self.clear_fields()
+
+    def overwrite_book(self, event):
+        selected_index = self.table.selected_row
+        if selected_index is not None:
+            title = self.title_inp.text
+            author = self.author_inp.text
+            year = self.year_inp.text
+            genre = self.genre_inp.text
+            pages = self.pages_inp.text
+            rating = self.rating_inp.text
+            synopsis = self.synopsis_inp.text
+
+            if not (title or author or year or pages or genre or rating or synopsis.strip()):
+                return
+
+            # Validate numeric inputs
+            if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
+                self.app.alert("Invalid input", "You've entered letters in Year, Page Count, or Rating. Please enter valid numbers.", "error")
+                return
+
+            book_details = [title, author, year, genre, pages, rating, synopsis]
+
+            self.library_manager.full_library[selected_index] = book_details
+            self.save_data()
+            self.load_data()  
 
     def delete_book(self, event):
         selected_index = self.table.selected_row
