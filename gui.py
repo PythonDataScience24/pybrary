@@ -103,7 +103,8 @@ class LibraryGUI:
 
         # Validate numeric inputs
         if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
-            gp.easygui.message("Invalid input in Year, Page Count, or Rating. Please enter valid numbers.", "Input Error")
+            self.app.alert("Invalid input", "You've entered letters in Year, Page Count, or Rating. Please enter valid numbers.", "error")
+    
             return
 
         book_details = [title, author, year, genre, pages, rating, synopsis]
