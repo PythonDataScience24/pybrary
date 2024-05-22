@@ -5,6 +5,8 @@ GUI module for the pybrary application
 import gooeypie as gp
 import csv
 from popup import Popup
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class LibraryGUI:
@@ -51,6 +53,10 @@ class LibraryGUI:
         self.search_btn = gp.Button(self.tab1, 'Search', self.search)
         self.clear_btn = gp.Button(self.tab1, 'Clear Fields', self.clear_fields)
 
+        self.visualize_btn_topic = gp.Button(self.tab2, 'Visualize by Topic', self.visualize_by_topic)
+        self.visualize_btn_rating = gp.Button(self.tab2, 'Visualize by Rating', self.visualize_by_rating)
+        self.visualize_btn_trends = gp.Button(self.tab2, 'Analyze Trends', self.analyze_trends)
+
         self.setup_tab1()
         self.setup_tab2()
 
@@ -93,8 +99,83 @@ class LibraryGUI:
 
     def setup_tab2(self):
         """Sets up the Visualization tab."""
-        self.tab2.set_grid(1, 1)
-        self.tab2.add(gp.Label(self.tab2, 'This is the second tab'), 1, 1, align='center', valign='middle')
+        self.tab2.set_grid(4, 1)
+        self.tab2.add(gp.Label(self.tab2, 'Visualizations and Analysis'), 1, 1, align='center')
+        self.tab2.add(self.visualize_btn_topic, 2, 1, align='center')
+        self.tab2.add(self.visualize_btn_rating, 3, 1, align='center')
+        self.tab2.add(self.visualize_btn_trends, 4, 1, align='center')
+
+    def visualize_by_topic(self, event):
+        """Visualizes the book collection by topic (genre)."""
+        genres = {}
+        for book in self.library_manager.full_library:
+            genre = book[3]
+            if genre in genres:
+                genres[genre] += 1
+            else:
+                genres[genre] = 1
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(genres.keys(), genres.values(), color='skyblue')
+        plt.xlabel('Genre')
+        plt.ylabel('Number of Books')
+        plt.title('Number of Books by Genre')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def visualize_by_rating(self, event):
+        """Visualizes the book collection by rating."""
+        ratings = {}
+        for book in self.library_manager.full_library:
+            rating = book[5]
+            if rating in ratings:
+                ratings[rating] += 1
+            else:
+                ratings[rating] = 1
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(ratings.keys(), ratings.values(), color='lightgreen')
+        plt.xlabel('Rating')
+        plt.ylabel('Number of Books')
+        plt.title('Number of Books by Rating')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def analyze_trends(self, event):
+        """Analyzes trends in book ratings per author per year."""
+        author_year_rating = {}
+        for book in self.library_manager.full_library:
+            author = book[1]
+            year = book[2]
+            rating = float(book[5])
+            if (author, year) in author_year_rating:
+                author_year_rating[(author, year)].append(rating)
+            else:
+                author_year_rating[(author, year)] = [rating]
+
+        trends = {}
+        for key, ratings in author_year_rating.items():
+            trends[key] = sum(ratings) / len(ratings)
+
+        authors = list(set([key[0] for key in trends.keys()]))
+        years = list(set([key[1] for key in trends.keys()]))
+        authors.sort()
+        years.sort()
+
+        plt.figure(figsize=(12, 6))
+        for author in authors:
+            avg_ratings = [trends.get((author, year), 0) for year in years]
+            plt.plot(years, avg_ratings, marker='o', label=author)
+
+        plt.xlabel('Year')
+        plt.ylabel('Average Rating')
+        plt.title('Average Book Ratings per Author per Year')
+        plt.legend()
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
     def clear_fields(self, event=None):
         """Clears the input fields."""
