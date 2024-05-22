@@ -1,5 +1,5 @@
 import gooeypie as gp
-
+import csv
 
 class LibraryGUI:
     def __init__(self, app, library_manager):
@@ -103,8 +103,7 @@ class LibraryGUI:
 
         # Validate numeric inputs
         if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
-            gp.easygui.message("Invalid input in Year, Page Count, or Rating. Please enter valid numbers.",
-                               "Input Error")
+            gp.easygui.message("Invalid input in Year, Page Count, or Rating. Please enter valid numbers.", "Input Error")
             return
 
         book_details = [title, author, year, genre, pages, rating, synopsis]
@@ -113,9 +112,10 @@ class LibraryGUI:
         self.clear_fields()
 
     def delete_book(self, event):
-        selected_row = self.table.selected
-        if selected_row:
-            self.library_manager.delete_book(selected_row)
+        selected_index = self.table.selected_row
+        if selected_index is not None:
+            del self.library_manager.full_library[selected_index]
+            self.save_data()
             self.load_data()
 
     def search(self, event):
@@ -160,3 +160,11 @@ class LibraryGUI:
             return True
         except ValueError:
             return False
+
+    def save_data(self):
+        try:
+            with open('library.csv', 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerows(self.library_manager.full_library)
+        except Exception as e:
+            print(f"Error saving data: {e}")
