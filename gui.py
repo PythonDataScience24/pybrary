@@ -1,10 +1,22 @@
+"""
+GUI module for the pybrary application
+"""
+
 import gooeypie as gp
 import csv
 from popup import Popup
 
 class LibraryGUI:
-    def __init__(self, app, library_manager):
-        self.app = app
+    """Handles the GUI for the library application."""
+    def __init__(self, main_app, library_manager):
+        """
+        Initializes the LibraryGUI with the given app and library manager.
+
+        Args:
+            pybary (GooeyPieApp): The main GooeyPie application.
+            library_manager (LibraryManager): The manager for the library data.
+        """
+        self.app = main_app
         self.library_manager = library_manager
 
         self.tabs = gp.TabContainer(self.app)
@@ -52,6 +64,7 @@ class LibraryGUI:
         self.load_data()
 
     def setup_tab1(self):
+        """Sets up the View Collection tab."""
         self.tab1.set_grid(6, 4)
 
         # Add input fields to tab1
@@ -79,10 +92,12 @@ class LibraryGUI:
         self.tab1.add(self.table, 6, 1, column_span=4, fill=True, stretch=True)
 
     def setup_tab2(self):
+        """Sets up the Visualization tab."""
         self.tab2.set_grid(1, 1)
         self.tab2.add(gp.Label(self.tab2, 'This is the second tab'), 1, 1, align='center', valign='middle')
 
     def clear_fields(self, event=None):
+        """Clears the input fields."""
         self.title_inp.clear()
         self.author_inp.clear()
         self.year_inp.clear()
@@ -93,6 +108,7 @@ class LibraryGUI:
         self.load_data()
 
     def add_book(self, event):
+        """Adds a book to the library."""
         title = self.title_inp.text
         author = self.author_inp.text
         year = self.year_inp.text
@@ -149,6 +165,7 @@ class LibraryGUI:
             self.load_data()  
 
     def delete_book(self, event):
+        """Deletes a book from the library."""
         selected_index = self.table.selected_row
         if selected_index is not None:
             del self.library_manager.full_library[selected_index]
@@ -156,6 +173,7 @@ class LibraryGUI:
             self.load_data()
 
     def search(self, event):
+        """Searches for books in the library."""
         title_search = self.title_inp.text
         author_search = self.author_inp.text
         genre_search = self.genre_inp.text
@@ -167,6 +185,7 @@ class LibraryGUI:
             self.table.add_row(row)
 
     def carry_over(self, event):
+        """Carries over the selected book details to the input fields."""
         selected_row = self.table.selected
         if selected_row:
             self.title_inp.text = selected_row[0]
@@ -178,12 +197,14 @@ class LibraryGUI:
             self.synopsis_inp.text = selected_row[6]
 
     def load_data(self):
+        """Loads the library data into the table."""
         self.table.clear()
         for row in self.library_manager.full_library:
             self.table.add_row(row)
 
     @staticmethod
     def is_valid_int(value):
+        """Checks if the value is a valid integer."""
         try:
             int(value)
             return True
@@ -192,6 +213,7 @@ class LibraryGUI:
 
     @staticmethod
     def is_valid_float(value):
+        """Checks if the value is a valid float."""
         try:
             float(value)
             return True
@@ -199,6 +221,7 @@ class LibraryGUI:
             return False
 
     def save_data(self):
+        """Saves the library data to a CSV file."""
         try:
             with open('library.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
