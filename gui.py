@@ -4,7 +4,6 @@ GUI module for the pybrary application
 
 import gooeypie as gp
 import csv
-from popup import Popup
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -200,22 +199,26 @@ class LibraryGUI:
         rating = self.rating_inp.text
         synopsis = self.synopsis_inp.text
 
-        if not (title and author and year and pages and genre and rating and synopsis.strip()):
-            Popup.show_error("All fields must be filled in.")
-            return
+        if not (title or author or year or pages or genre or rating or synopsis.strip()):
+                self.app.alert("Invalid input", "Please fill in all", "error")
+                return
 
         # Validate numeric inputs
         try:
             if not self.is_valid_int(year):
-                raise ValueError("Invalid input: Please enter a valid integer for year.")
+                self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.", "error")
+                return
             if not self.is_valid_int(pages):
-                raise ValueError("Invalid input: Please enter a valid integer for page count.")
+                self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.", "error")
+                return
             if not self.is_valid_float(rating):
-                raise ValueError("Invalid input: Please enter a valid float for rating.")
+                self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.", "error")
+                return
             if not (1 <= float(rating) <= 5):
-                raise ValueError("Invalid rating: Please enter a number between 1 and 5.")
+                self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
+                return
         except ValueError as e:
-            Popup.show_error(str(e))
+            self.app.alert('Error', str(e), 'error')
             return
 
         book_details = [title, author, year, genre, pages, rating, synopsis]
@@ -235,18 +238,32 @@ class LibraryGUI:
             synopsis = self.synopsis_inp.text
 
             if not (title or author or year or pages or genre or rating or synopsis.strip()):
+                self.app.alert("Invalid input", "Please fill in all", "error")
                 return
 
             # Validate numeric inputs
-            if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
-                self.app.alert("Invalid input", "You've entered letters in Year, Page Count, or Rating. Please enter valid numbers.", "error")
+            try:
+                if not self.is_valid_int(year):
+                    self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.", "error")
+                    return
+                if not self.is_valid_int(pages):
+                    self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.", "error")
+                    return
+                if not self.is_valid_float(rating):
+                    self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.", "error")
+                    return
+                if not (1 <= float(rating) <= 5):
+                    self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
+                    return
+            except ValueError as e:
+                self.app.alert('Error', str(e), 'error')
                 return
 
-            book_details = [title, author, year, genre, pages, rating, synopsis]
+        book_details = [title, author, year, genre, pages, rating, synopsis]
 
-            self.library_manager.full_library[selected_index] = book_details
-            self.save_data()
-            self.load_data()  
+        self.library_manager.full_library[selected_index] = book_details
+        self.save_data()
+        self.load_data()  
 
     def delete_book(self, event):
         """Deletes a book from the library."""
