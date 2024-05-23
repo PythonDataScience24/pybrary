@@ -14,6 +14,7 @@ In the initial implementation of the Pybrary project, the entire functionality w
 2. **New Classes**:
    - **LibraryManager**: This class is responsible for all operations related to managing the library data, such as adding, deleting, searching, loading, and saving books.
    - **LibraryGUI**: This class is responsible for creating and managing the graphical user interface (GUI) of the application.
+   - **Librarian**: This class handles the storing, deleting and overwriting of books, so it is not done in the GUI directly.
 
 ### Detailed Changes
 
@@ -24,3 +25,8 @@ In the initial implementation of the Pybrary project, the entire functionality w
   - Manage the library data.
   - Add, delete, and search for books.
   - Load and save data to/from a CSV file.
+
+#### 2.Creation of `Librarian` Class
+- **File**: `librarian.py`
+- **Responsibilities**:
+  - call functions of the library_manager when buttons are pressed.
