@@ -252,6 +252,12 @@ class LibraryGUI:
 
         # Validate numeric inputs
         try:
+            if title.strip() == '':
+                self.app.alert("Invalid input", "Invalid Title: Please enter a Title.", "error")
+                return
+            if author.strip() == '':
+                self.app.alert("Invalid input", "Invalid author: Please enter a author.", "error")
+                return
             if not self.is_valid_int(year):
                 self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
                                "error")
@@ -293,6 +299,12 @@ class LibraryGUI:
 
             # Validate numeric inputs
             try:
+                if title.strip() == '':
+                    self.app.alert("Invalid input", "Invalid Title: Please enter a Title.", "error")
+                    return
+                if author.strip() == '':
+                    self.app.alert("Invalid input", "Invalid author: Please enter a author.", "error")
+                    return
                 if not self.is_valid_int(year):
                     self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
                                    "error")
