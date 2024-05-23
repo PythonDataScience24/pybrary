@@ -1,5 +1,4 @@
 import gooeypie as gp
-import csv
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -8,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class LibraryGUI:
     """Handles the GUI for the library application."""
 
-    def __init__(self, main_app, library_manager):
+    def __init__(self, main_app, library_manager, librarian):
         """
         Initializes the LibraryGUI with the given app and library manager.
 
@@ -18,6 +17,7 @@ class LibraryGUI:
         """
         self.app = main_app
         self.library_manager = library_manager
+        self.librarian = librarian
 
         self.tabs = gp.TabContainer(self.app)
         self.tab1 = gp.Tab(self.tabs, 'View Collection')
@@ -246,40 +246,7 @@ class LibraryGUI:
         rating = self.rating_inp.text
         synopsis = self.synopsis_inp.text
 
-        if not (title or author or year or pages or genre or rating or synopsis.strip()):
-            self.app.alert("Invalid input", "Please fill in all fields", "error")
-            return
-
-        # Validate numeric inputs
-        try:
-            if title.strip() == '':
-                self.app.alert("Invalid input", "Invalid Title: Please enter a Title.", "error")
-                return
-            if author.strip() == '':
-                self.app.alert("Invalid input", "Invalid author: Please enter a author.", "error")
-                return
-            if not self.is_valid_int(year):
-                self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
-                               "error")
-                return
-            if not self.is_valid_int(pages):
-                self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.",
-                               "error")
-                return
-            if not self.is_valid_float(rating):
-                self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.",
-                               "error")
-                return
-            if not (1 <= float(rating) <= 5):
-                self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
-                return
-        except ValueError as e:
-            self.app.alert('Error', str(e), 'error')
-            return
-
-        book_details = [title, author, year, genre, pages, rating, synopsis]
-
-        self.library_manager.add_book(book_details)
+        self.librarian.add_book(title, author, year, genre, pages, rating, synopsis)
         self.clear_fields()
 
     def overwrite_book(self, event):
@@ -293,49 +260,22 @@ class LibraryGUI:
             rating = self.rating_inp.text
             synopsis = self.synopsis_inp.text
 
-            if not (title or author or year or pages or genre or rating or synopsis.strip()):
-                self.app.alert("Invalid input", "Please fill in all fields", "error")
-                return
-
-            # Validate numeric inputs
-            try:
-                if title.strip() == '':
-                    self.app.alert("Invalid input", "Invalid Title: Please enter a Title.", "error")
-                    return
-                if author.strip() == '':
-                    self.app.alert("Invalid input", "Invalid author: Please enter a author.", "error")
-                    return
-                if not self.is_valid_int(year):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
-                                   "error")
-                    return
-                if not self.is_valid_int(pages):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.",
-                                   "error")
-                    return
-                if not self.is_valid_float(rating):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.",
-                                   "error")
-                    return
-                if not (1 <= float(rating) <= 5):
-                    self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
-                    return
-            except ValueError as e:
-                self.app.alert('Error', str(e), 'error')
-                return
-
-            book_details = [title, author, year, genre, pages, rating, synopsis]
-
-            self.library_manager.full_library[selected_index] = book_details
-            self.save_data()
+            self.librarian.overwrite_book(title, author, year, genre, pages, rating, synopsis, selected_index)
             self.load_data()
 
     def delete_book(self, event):
         """Deletes a book from the library."""
         selected_index = self.table.selected_row
         if selected_index is not None:
-            del self.library_manager.full_library[selected_index]
-            self.save_data()
+            title = self.title_inp.text
+            author = self.author_inp.text
+            year = self.year_inp.text
+            genre = self.genre_inp.text
+            pages = self.pages_inp.text
+            rating = self.rating_inp.text
+            synopsis = self.synopsis_inp.text
+            book_details = [title, author, year, genre, pages, rating, synopsis]
+            self.librarian.delete_book(book_details)
             self.load_data()
 
     def search(self, event):
@@ -367,30 +307,3 @@ class LibraryGUI:
         self.table.clear()
         for row in self.library_manager.full_library:
             self.table.add_row(row)
-
-    @staticmethod
-    def is_valid_int(value):
-        """Checks if the value is a valid integer."""
-        try:
-            int(value)
-            return True
-        except ValueError:
-            return False
-
-    @staticmethod
-    def is_valid_float(value):
-        """Checks if the value is a valid float."""
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
-
-    def save_data(self):
-        """Saves the library data to a CSV file."""
-        try:
-            with open('library.csv', 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerows(self.library_manager.full_library)
-        except Exception as e:
-            print(f"Error saving data: {e}")
