@@ -52,7 +52,7 @@ class LibraryGUI:
         self.search_btn = gp.Button(self.button_container, 'Search', self.search)
         self.clear_btn = gp.Button(self.button_container, 'Clear Fields', self.clear_fields)
 
-        viz_categories = ['Topic', 'Rating', 'Trends']
+        viz_categories = ['Topic', 'Author', 'Rating', 'Trends']
         self.visualize_dd = gp.Dropdown(self.tab2, viz_categories)
         self.visualize_dd.selected_index = 0
         self.visualize_btn = gp.Button(self.tab2, 'GO!', self.visualize)
@@ -112,6 +112,8 @@ class LibraryGUI:
         selected_category = self.visualize_dd.selected
         if selected_category == 'Topic':
             self.visualize_by_topic()
+        elif selected_category == 'Author':
+            self.visualize_by_author()
         elif selected_category == 'Rating':
             self.visualize_by_rating()
         elif selected_category == 'Trends':
@@ -132,6 +134,25 @@ class LibraryGUI:
         ax.set_xlabel('Genre')
         ax.set_ylabel('Number of Books')
         ax.set_title('Number of Books by Genre')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        self.display_graph(fig)
+
+    def visualize_by_author(self):
+        """Visualizes the book collection by Author."""
+        authors = {}
+        for book in self.library_manager.full_library:
+            author = book[1]
+            if author in authors:
+                authors[author] += 1
+            else:
+                authors[author] = 1
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.bar(authors.keys(), authors.values(), color='darkblue')
+        ax.set_xlabel('Authors')
+        ax.set_ylabel('Number of Books')
+        ax.set_title('Number of Books by Author')
         plt.xticks(rotation=45)
         plt.tight_layout()
 
