@@ -1,10 +1,7 @@
-"""
-GUI module for the pybrary application
-"""
-
 import gooeypie as gp
 import csv
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
@@ -55,9 +52,13 @@ class LibraryGUI:
         self.search_btn = gp.Button(self.button_container, 'Search', self.search)
         self.clear_btn = gp.Button(self.button_container, 'Clear Fields', self.clear_fields)
 
-        self.visualize_btn_topic = gp.Button(self.tab2, 'Visualize by Topic', self.visualize_by_topic)
-        self.visualize_btn_rating = gp.Button(self.tab2, 'Visualize by Rating', self.visualize_by_rating)
-        self.visualize_btn_trends = gp.Button(self.tab2, 'Analyze Trends', self.analyze_trends)
+        viz_categories = ['Topic', 'Rating', 'Trends']
+        self.visualize_dd = gp.Dropdown(self.tab2, viz_categories)
+        self.visualize_dd.selected_index = 0
+        self.visualize_btn = gp.Button(self.tab2, 'GO!', self.visualize)
+        self.graph_container = gp.LabelContainer(self.tab2, 'Graph')
+        self.graph_container.set_grid(1, 1)
+        self.graph_canvas = None
 
         self.setup_tab1()
         self.setup_tab2()
@@ -102,11 +103,21 @@ class LibraryGUI:
         """Sets up the Visualization tab."""
         self.tab2.set_grid(4, 1)
         self.tab2.add(gp.Label(self.tab2, 'Visualizations and Analysis'), 1, 1, align='center')
-        self.tab2.add(self.visualize_btn_topic, 2, 1, align='center')
-        self.tab2.add(self.visualize_btn_rating, 3, 1, align='center')
-        self.tab2.add(self.visualize_btn_trends, 4, 1, align='center')
+        self.tab2.add(self.visualize_dd, 2, 1, align='center')
+        self.tab2.add(self.visualize_btn, 3, 1, align='center')
+        self.tab2.add(self.graph_container, 4, 1, fill=True, stretch=True)
 
-    def visualize_by_topic(self, event):
+    def visualize(self, event):
+        """Handles visualization based on the selected category."""
+        selected_category = self.visualize_dd.selected
+        if selected_category == 'Topic':
+            self.visualize_by_topic()
+        elif selected_category == 'Rating':
+            self.visualize_by_rating()
+        elif selected_category == 'Trends':
+            self.analyze_trends()
+
+    def visualize_by_topic(self):
         """Visualizes the book collection by topic (genre)."""
         genres = {}
         for book in self.library_manager.full_library:
@@ -116,18 +127,19 @@ class LibraryGUI:
             else:
                 genres[genre] = 1
 
-        plt.figure(figsize=(10, 5))
-        plt.bar(genres.keys(), genres.values(), color='skyblue')
-        plt.xlabel('Genre')
-        plt.ylabel('Number of Books')
-        plt.title('Number of Books by Genre')
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.bar(genres.keys(), genres.values(), color='skyblue')
+        ax.set_xlabel('Genre')
+        ax.set_ylabel('Number of Books')
+        ax.set_title('Number of Books by Genre')
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
 
-    def visualize_by_rating(self, event):
+        self.display_graph(fig)
+
+    def visualize_by_rating(self):
         """Visualizes the book collection by rating."""
-        ratings = {}
+        ratings = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
         for book in self.library_manager.full_library:
             rating = book[5]
             if rating in ratings:
@@ -135,16 +147,21 @@ class LibraryGUI:
             else:
                 ratings[rating] = 1
 
-        plt.figure(figsize=(10, 5))
-        plt.bar(ratings.keys(), ratings.values(), color='lightgreen')
-        plt.xlabel('Rating')
-        plt.ylabel('Number of Books')
-        plt.title('Number of Books by Rating')
+        # Convert the dictionary to a pandas DataFrame to ensure the correct order
+        ratings_df = pd.DataFrame(list(ratings.items()), columns=['Rating', 'Count'])
+        ratings_df = ratings_df.sort_values(by='Rating')
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.bar(ratings_df['Rating'], ratings_df['Count'], color='lightgreen')
+        ax.set_xlabel('Rating')
+        ax.set_ylabel('Number of Books')
+        ax.set_title('Number of Books by Rating')
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
 
-    def analyze_trends(self, event):
+        self.display_graph(fig)
+
+    def analyze_trends(self):
         """Analyzes trends in book ratings per author per year."""
         author_year_rating = {}
         for book in self.library_manager.full_library:
@@ -165,18 +182,27 @@ class LibraryGUI:
         authors.sort()
         years.sort()
 
-        plt.figure(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(12, 6))
         for author in authors:
             avg_ratings = [trends.get((author, year), 0) for year in years]
-            plt.plot(years, avg_ratings, marker='o', label=author)
+            ax.plot(years, avg_ratings, marker='o', label=author)
 
-        plt.xlabel('Year')
-        plt.ylabel('Average Rating')
-        plt.title('Average Book Ratings per Author per Year')
-        plt.legend()
+        ax.set_xlabel('Year')
+        ax.set_ylabel('Average Rating')
+        ax.set_title('Average Book Ratings per Author per Year')
+        ax.legend()
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
+
+        self.display_graph(fig)
+
+    def display_graph(self, fig):
+        """Displays the given figure in the graph container."""
+        if self.graph_canvas:
+            self.graph_canvas.get_tk_widget().destroy()
+        self.graph_canvas = FigureCanvasTkAgg(fig, master=self.graph_container)
+        self.graph_canvas.draw()
+        self.graph_canvas.get_tk_widget().pack(fill='both', expand=True)
 
     def clear_fields(self, event=None):
         """Clears the input fields."""
@@ -200,19 +226,22 @@ class LibraryGUI:
         synopsis = self.synopsis_inp.text
 
         if not (title or author or year or pages or genre or rating or synopsis.strip()):
-                self.app.alert("Invalid input", "Please fill in all", "error")
-                return
+            self.app.alert("Invalid input", "Please fill in all fields", "error")
+            return
 
         # Validate numeric inputs
         try:
             if not self.is_valid_int(year):
-                self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.", "error")
+                self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
+                               "error")
                 return
             if not self.is_valid_int(pages):
-                self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.", "error")
+                self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.",
+                               "error")
                 return
             if not self.is_valid_float(rating):
-                self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.", "error")
+                self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.",
+                               "error")
                 return
             if not (1 <= float(rating) <= 5):
                 self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
@@ -238,19 +267,22 @@ class LibraryGUI:
             synopsis = self.synopsis_inp.text
 
             if not (title or author or year or pages or genre or rating or synopsis.strip()):
-                self.app.alert("Invalid input", "Please fill in all", "error")
+                self.app.alert("Invalid input", "Please fill in all fields", "error")
                 return
 
             # Validate numeric inputs
             try:
                 if not self.is_valid_int(year):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.", "error")
+                    self.app.alert("Invalid input", "You've entered non-numbers in Year. Please enter valid numbers.",
+                                   "error")
                     return
                 if not self.is_valid_int(pages):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.", "error")
+                    self.app.alert("Invalid input", "You've entered non-numbers in Pages. Please enter valid numbers.",
+                                   "error")
                     return
                 if not self.is_valid_float(rating):
-                    self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.", "error")
+                    self.app.alert("Invalid input", "You've entered non-numbers in Rating. Please enter valid numbers.",
+                                   "error")
                     return
                 if not (1 <= float(rating) <= 5):
                     self.app.alert("Invalid input", "Invalid rating: Please enter a number between 1 and 5.", "error")
@@ -259,11 +291,11 @@ class LibraryGUI:
                 self.app.alert('Error', str(e), 'error')
                 return
 
-        book_details = [title, author, year, genre, pages, rating, synopsis]
+            book_details = [title, author, year, genre, pages, rating, synopsis]
 
-        self.library_manager.full_library[selected_index] = book_details
-        self.save_data()
-        self.load_data()  
+            self.library_manager.full_library[selected_index] = book_details
+            self.save_data()
+            self.load_data()
 
     def delete_book(self, event):
         """Deletes a book from the library."""
