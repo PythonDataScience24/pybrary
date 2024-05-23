@@ -12,9 +12,10 @@ class Librarian:
 
     def add_book(self, title, author, year, genre, pages, rating, synopsis):
         if self.check_inputs(title, author, year, genre, pages, rating, synopsis):
-            return
+            return False
         book_details = [title, author, year, genre, pages, rating, synopsis]
         self.library_manager.add_book(book_details)
+        return True
 
     def overwrite_book(self, title, author, year, genre, pages, rating, synopsis, selected_index):
         if self.check_inputs(title, author, year, genre, pages, rating, synopsis):
@@ -22,6 +23,7 @@ class Librarian:
         book_details = [title, author, year, genre, pages, rating, synopsis]
         self.library_manager.full_library[selected_index] = book_details
         self.save_data()
+        return
 
     def delete_book(self, book_details):
         self.library_manager.delete_book(book_details)
@@ -29,7 +31,7 @@ class Librarian:
 
     def check_inputs(self, title, author, year, genre, pages, rating, synopsis):
         # make sure every field has input
-        if not (title.strip() != '' or author.strip() != '' or year or pages or genre or rating or synopsis.strip()):
+        if title.strip() == '' or author.strip() == '' or not(year and pages and genre and rating):
             self.app.alert("Invalid input", "Please fill in all fields", "error")
             return True
         # check numeric input
