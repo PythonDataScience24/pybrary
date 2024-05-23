@@ -246,8 +246,9 @@ class LibraryGUI:
         rating = self.rating_inp.text
         synopsis = self.synopsis_inp.text
 
-        self.librarian.add_book(title, author, year, genre, pages, rating, synopsis)
-        self.clear_fields()
+        b = self.librarian.add_book(title, author, year, genre, pages, rating, synopsis)
+        if b:
+            self.clear_fields()
 
     def overwrite_book(self, event):
         selected_index = self.table.selected_row
