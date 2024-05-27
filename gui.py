@@ -286,9 +286,13 @@ class LibraryGUI:
         """Searches for books in the library."""
         title_search = self.title_inp.text
         author_search = self.author_inp.text
+        year_search = self.year_inp.text
         genre_search = self.genre_inp.text
+        pages_search = self.pages_inp.text
+        rating_search = self.rating_inp.text
+        synopsis_search = self.synopsis_inp.text
 
-        search_results = self.library_manager.search_books(title_search, author_search, genre_search)
+        search_results = self.library_manager.search_books(title_search, author_search, genre_search, year_search, pages_search, rating_search, synopsis_search)
 
         self.table.clear()
         for row in search_results:
@@ -306,6 +310,7 @@ class LibraryGUI:
             self.rating_inp.text = selected_row[5]
             self.synopsis_inp.text = selected_row[6]
 
+    # TODO add_row converts title string to int, fix that
     def load_data(self):
         """Loads the library data into the table."""
         self.table.clear()
