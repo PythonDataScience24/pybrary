@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="abe89a19-a4f5-4c0e-81f2-0c32325ec615" name="Changes" comment="Added visualizations prototype">
-      <change beforePath="$PROJECT_DIR$/library.csv" beforeDir="false" afterPath="$PROJECT_DIR$/library.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pybrary.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pybrary.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,6 +183,7 @@
       <workItem from="1716454157463" duration="9000" />
       <workItem from="1716454992822" duration="1883000" />
       <workItem from="1716470144979" duration="8000" />
+      <workItem from="1716969840506" duration="766000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored project and fixed add book bug">
       <option name="closed" value="true" />
@@ -245,6 +248,21 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -256,6 +274,13 @@
                     <value>
                       <list>
                         <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="user">
+                    <value>
+                      <list>
+                        <option value="*" />
                       </list>
                     </value>
                   </entry>
