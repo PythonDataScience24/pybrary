@@ -7,19 +7,22 @@ The `search_books` function in the `LibraryManager` class searches the library f
 
 ### Test Cases
 1. **Search by Title**
-   - **Description**: Ensure the function finds a book by its title.
+   - **Description**: Ensure the function finds a book by its title regardless of capitalization.
    - **Input**: `title_search="The gREAT Gatsby", author_search="", genre_search=""`
    - **Expected Output**: `[["The Great Gatsby", "F. Scott Fitzgerald", "Fiction", "Novel"]]`
 
 2. **Search by Author**
+   - **Description**: Ensure the function finds a book by its author.
    - **Input**: `title_search="", author_search="HARPER Lee", genre_search=""`
    - **Expected Output**: `[["To Kill a Mockingbird", "Harper Lee", "Fiction", "Novel"]]`
 
-3. **Search by Genre**
+4. **Search by Genre**
+   - **Description**: Ensure the function finds a book by its genre.
    - **Input**: `title_search="", author_search="", genre_search="dystopian"`
    - **Expected Output**: `[["1984", "George Orwell", "Fiction", "Dystopian"]]`
 
-4. **No Match Found**
+6. **No Match Found**
+   - **Description**: Ensures that no book is returned when searching for a nonexisting book as well as unexpected character.
    - **Input**: `title_search="Nonexistent Title😀", author_search="", genre_search=""`
    - **Expected Output**: `[]`
 
