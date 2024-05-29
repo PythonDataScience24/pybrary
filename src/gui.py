@@ -310,10 +310,10 @@ class LibraryGUI:
             self.rating_inp.text = selected_row[5]
             self.synopsis_inp.text = selected_row[6]
 
+        # TODO add_row converts title string to int, fix that
+
     def load_data(self):
         """Loads the library data into the table."""
         self.table.clear()
         for row in self.library_manager.full_library:
-            # Ensure the title is treated as a string
-            row['title'] = str(row['title'])
             self.table.add_row(row)
