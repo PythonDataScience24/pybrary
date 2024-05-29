@@ -28,11 +28,11 @@ Pybrary is python applet written to help you manage your library of books. It wi
 1) Clone this repository
 2) In the root folder, run
 
-`pip install -r requirements.txt`
+`pip install -r src/requirements.txt`
 
 3) To launch pybrary, run 
 
-`python pybrary.py` 
+`python src/pybrary.py` 
 
 To use pybrary, simply use the input fields to enter the details of your book, and then add it to the table. Selected entries can be deleted from the library with the Delete button.
 To search for books, enter any criteria in the input fields and then press Search.

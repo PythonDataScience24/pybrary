@@ -1,8 +1,8 @@
 import gooeypie as gp
 
-from librarian import Librarian
+from src.librarian import Librarian
 from library_manager import LibraryManager
-from gui import LibraryGUI
+from src.gui import LibraryGUI
 
 
 def main():
