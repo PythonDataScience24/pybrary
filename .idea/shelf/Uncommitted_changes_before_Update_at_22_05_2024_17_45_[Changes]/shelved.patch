@@ -1,0 +1,78 @@
+Index: gui.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import gooeypie as gp\r\nimport csv\r\n\r\nclass LibraryGUI:\r\n    def __init__(self, app, library_manager):\r\n        self.app = app\r\n        self.library_manager = library_manager\r\n\r\n        self.tabs = gp.TabContainer(self.app)\r\n        self.tab1 = gp.Tab(self.tabs, 'View Collection')\r\n        self.tab2 = gp.Tab(self.tabs, 'Visualization')\r\n\r\n        # Define instance attributes\r\n        self.title_lbl = gp.Label(self.tab1, 'Title:')\r\n        self.title_inp = gp.Input(self.tab1)\r\n        self.author_lbl = gp.Label(self.tab1, 'Author:')\r\n        self.author_inp = gp.Input(self.tab1)\r\n        self.year_lbl = gp.Label(self.tab1, 'Year:')\r\n        self.year_inp = gp.Input(self.tab1)\r\n        self.genre_lbl = gp.Label(self.tab1, 'Genre:')\r\n        self.genre_inp = gp.Input(self.tab1)\r\n        self.pages_lbl = gp.Label(self.tab1, 'Page Count:')\r\n        self.pages_inp = gp.Input(self.tab1)\r\n        self.rating_lbl = gp.Label(self.tab1, 'Rating:')\r\n        self.rating_inp = gp.Input(self.tab1)\r\n        self.synopsis_container = gp.LabelContainer(self.tab1, 'Synopsis:')\r\n        self.synopsis_container.set_grid(1, 1)\r\n        self.synopsis_inp = gp.Textbox(self.synopsis_container, 70)\r\n\r\n        self.table = gp.Table(self.tab1, ['Title', 'Author', 'Year', 'Genre', 'Pages', 'Rating', 'Synopsis'])\r\n        self.table.set_column_widths(60, 60, 60, 60, 60, 60, 60)\r\n        self.table.height = 5\r\n\r\n        self.add_btn = gp.Button(self.tab1, 'Add Book', self.add_book)\r\n        self.delete_btn = gp.Button(self.tab1, 'Delete Book', self.delete_book)\r\n        self.search_btn = gp.Button(self.tab1, 'Search', self.search)\r\n        self.clear_btn = gp.Button(self.tab1, 'Clear Fields', self.clear_fields)\r\n\r\n        self.setup_tab1()\r\n        self.setup_tab2()\r\n\r\n        self.tabs.add(self.tab1)\r\n        self.tabs.add(self.tab2)\r\n\r\n        self.app.set_grid(1, 1)\r\n        self.app.add(self.tabs, 1, 1, fill=True, stretch=True)\r\n\r\n        self.load_data()\r\n\r\n    def setup_tab1(self):\r\n        self.tab1.set_grid(6, 4)\r\n\r\n        # Add input fields to tab1\r\n        self.tab1.add(self.title_lbl, 1, 1)\r\n        self.tab1.add(self.title_inp, 1, 2)\r\n        self.tab1.add(self.author_lbl, 1, 3)\r\n        self.tab1.add(self.author_inp, 1, 4)\r\n        self.tab1.add(self.year_lbl, 2, 1)\r\n        self.tab1.add(self.year_inp, 2, 2)\r\n        self.tab1.add(self.genre_lbl, 2, 3)\r\n        self.tab1.add(self.genre_inp, 2, 4)\r\n        self.tab1.add(self.pages_lbl, 3, 1)\r\n        self.tab1.add(self.pages_inp, 3, 2)\r\n        self.tab1.add(self.rating_lbl, 3, 3)\r\n        self.tab1.add(self.rating_inp, 3, 4)\r\n        self.tab1.add(self.synopsis_container, 4, 1, column_span=4)\r\n        self.synopsis_container.add(self.synopsis_inp, 1, 1)\r\n\r\n        self.table.add_event_listener('select', self.carry_over)\r\n        self.tab1.add(self.table, 6, 1, column_span=4, fill=True, stretch=True)\r\n\r\n        # Add buttons to tab1\r\n        self.tab1.add(self.clear_btn, 5, 1)\r\n        self.tab1.add(self.search_btn, 5, 2)\r\n        self.tab1.add(self.add_btn, 5, 3)\r\n        self.tab1.add(self.delete_btn, 5, 4)\r\n\r\n    def setup_tab2(self):\r\n        self.tab2.set_grid(1, 1)\r\n        self.tab2.add(gp.Label(self.tab2, 'This is the second tab'), 1, 1, align='center', valign='middle')\r\n\r\n    def clear_fields(self, event=None):\r\n        self.title_inp.clear()\r\n        self.author_inp.clear()\r\n        self.year_inp.clear()\r\n        self.genre_inp.clear()\r\n        self.pages_inp.clear()\r\n        self.rating_inp.clear()\r\n        self.synopsis_inp.clear()\r\n        self.load_data()\r\n\r\n    def add_book(self, event):\r\n        title = self.title_inp.text\r\n        author = self.author_inp.text\r\n        year = self.year_inp.text\r\n        genre = self.genre_inp.text\r\n        pages = self.pages_inp.text\r\n        rating = self.rating_inp.text\r\n        synopsis = self.synopsis_inp.text\r\n\r\n        if not (title or author or year or pages or genre or rating or synopsis.strip()):\r\n            return\r\n\r\n        # Validate numeric inputs\r\n        if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):\r\n            gp.easygui.message(\"Invalid input in Year, Page Count, or Rating. Please enter valid numbers.\", \"Input Error\")\r\n            return\r\n\r\n        book_details = [title, author, year, genre, pages, rating, synopsis]\r\n\r\n        self.library_manager.add_book(book_details)\r\n        self.clear_fields()\r\n\r\n    def delete_book(self, event):\r\n        selected_index = self.table.selected_row\r\n        if selected_index is not None:\r\n            del self.library_manager.full_library[selected_index]\r\n            self.save_data()\r\n            self.load_data()\r\n\r\n    def search(self, event):\r\n        title_search = self.title_inp.text\r\n        author_search = self.author_inp.text\r\n        genre_search = self.genre_inp.text\r\n\r\n        search_results = self.library_manager.search_books(title_search, author_search, genre_search)\r\n\r\n        self.table.clear()\r\n        for row in search_results:\r\n            self.table.add_row(row)\r\n\r\n    def carry_over(self, event):\r\n        selected_row = self.table.selected\r\n        if selected_row:\r\n            self.title_inp.text = selected_row[0]\r\n            self.author_inp.text = selected_row[1]\r\n            self.year_inp.text = selected_row[2]\r\n            self.genre_inp.text = selected_row[3]\r\n            self.pages_inp.text = selected_row[4]\r\n            self.rating_inp.text = selected_row[5]\r\n            self.synopsis_inp.text = selected_row[6]\r\n\r\n    def load_data(self):\r\n        self.table.clear()\r\n        for row in self.library_manager.full_library:\r\n            self.table.add_row(row)\r\n\r\n    @staticmethod\r\n    def is_valid_int(value):\r\n        try:\r\n            int(value)\r\n            return True\r\n        except ValueError:\r\n            return False\r\n\r\n    @staticmethod\r\n    def is_valid_float(value):\r\n        try:\r\n            float(value)\r\n            return True\r\n        except ValueError:\r\n            return False\r\n\r\n    def save_data(self):\r\n        try:\r\n            with open('library.csv', 'w', newline='') as f:\r\n                writer = csv.writer(f)\r\n                writer.writerows(self.library_manager.full_library)\r\n        except Exception as e:\r\n            print(f\"Error saving data: {e}\")\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gui.py b/gui.py
+--- a/gui.py	(revision 5f4cc913ff83d51750d4aa6167e9acf13d4a9c3a)
++++ b/gui.py	(date 1716387818130)
+@@ -1,5 +1,6 @@
+ import gooeypie as gp
+ import csv
++from popup import Popup
+ 
+ class LibraryGUI:
+     def __init__(self, app, library_manager):
+@@ -102,8 +103,17 @@
+             return
+ 
+         # Validate numeric inputs
+-        if not self.is_valid_int(year) or not self.is_valid_int(pages) or not self.is_valid_float(rating):
+-            gp.easygui.message("Invalid input in Year, Page Count, or Rating. Please enter valid numbers.", "Input Error")
++        if not self.is_valid_int(year):
++            Popup.show_error("Invalid input: Please enter a valid integer for year.")
++            return
++        if not self.is_valid_int(pages):
++            Popup.show_error("Invalid input: Please enter a valid integer for page count.")
++            return
++        if not self.is_valid_float(rating):
++            Popup.show_error("Invalid input: Please enter a valid float for rating.")
++            return
++        if not (1 <= float(rating) <= 5):
++            Popup.show_error("Invalid rating: Please enter a number between 1 and 5.")
+             return
+ 
+         book_details = [title, author, year, genre, pages, rating, synopsis]
+Index: library.csv
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Yeah,sdf,2012,Sci,234,8,Eindk 3\r\nNigl,sdf,2012,Sci,234,8,Eindk 3\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/library.csv b/library.csv
+--- a/library.csv	(revision 5f4cc913ff83d51750d4aa6167e9acf13d4a9c3a)
++++ b/library.csv	(date 1716386205258)
+@@ -1,2 +1,2 @@
+ Yeah,sdf,2012,Sci,234,8,Eindk 3
+-Nigl,sdf,2012,Sci,234,8,Eindk 3
++Yeah,sdf,2012,Sci,234,84,Eindk 3
+Index: popup.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/popup.py b/popup.py
+new file mode 100644
+--- /dev/null	(date 1716387083386)
++++ b/popup.py	(date 1716387083386)
+@@ -0,0 +1,17 @@
++import gooeypie as gp
++
++
++class Popup:
++    @staticmethod
++    def show_error(message):
++        popup = gp.GooeyPieApp('Error')
++        popup.set_grid(3, 1)
++
++        msg = gp.Label(popup, message)
++        msg.align = 'center'
++        popup.add(msg, 1, 1, align='center')
++
++        okay_btn = gp.Button(popup, 'Okay', lambda event: popup.destroy())
++        popup.add(okay_btn, 3, 1, align='right')
++
++        popup.run()
