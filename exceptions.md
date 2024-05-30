@@ -30,3 +30,25 @@ def load_csv(self):
                 self.full_library.append(row)
     except FileNotFoundError:
         pass  # It's okay if the file doesn't exist
+```
+#### save_data Method
+In the save_data method, we handle potential IO errors that might occur during the file writing process. This ensures that if an error occurs, it is logged and the application can attempt to recover or inform the user appropriately.
+
+### Data Validation
+To ensure data integrity, we validate user inputs for various fields such as year, pages, and rating. If the input is invalid, we raise an exception to inform the user and prevent the application from proceeding with incorrect data.
+
+### User Input Validation
+We handle the following cases:
+
+- Empty Input: If a user tries to add a book without providing necessary details.
+- Invalid Rating: If the rating of a book is not between 1 and 5.
+- Invalid Data Types: If non-numeric values are entered in fields such as year, pages, or rating.
+
+### User Feedback and Logging
+Currently, we do not have a robust mechanism for user feedback or logging beyond printing error messages. Enhancing this aspect could involve implementing logging to a file and providing more user-friendly messages via the GUI.
+
+### Fallback Mechanisms
+We primarily use try and except blocks to catch exceptions and prevent the application from crashing. There are no advanced fallback mechanisms implemented at this time.
+
+### Testing and Debugging
+We ensure the robustness of our exception handling through unit tests. The book_test.py file includes tests for various scenarios to verify that our exception handling works as expected.
