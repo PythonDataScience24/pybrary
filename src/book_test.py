@@ -14,22 +14,22 @@ class TestLibraryManager(unittest.TestCase):
         ]
 
     def test_search_books_by_title(self):
-        result = self.manager.search_books("The gREAT Gatsby", "", "")
+        result = self.manager.search_books("The gREAT Gatsby", "", "","","","","")
         expected = [["The Great Gatsby", "F. Scott Fitzgerald", "Fiction", "Novel"]]
         self.assertEqual(result, expected, "Should find 'The Great Gatsby' by title")
 
     def test_search_books_by_author(self):
-        result = self.manager.search_books("", "HARPER Lee", "")
+        result = self.manager.search_books("", "HARPER Lee", "","","","","")
         expected = [["To Kill a Mockingbird", "Harper Lee", "Fiction", "Novel"]]
         self.assertEqual(result, expected, "Should find 'To Kill a Mockingbird' by author")
 
     def test_search_books_by_genre(self):
-        result = self.manager.search_books("", "", "dystopian")
+        result = self.manager.search_books("", "", "dystopian","","","","")
         expected = [["1984", "George Orwell", "Fiction", "Dystopian"]]
         self.assertEqual(result, expected, "Should find '1984' by genre")
 
     def test_search_books_no_match(self):
-        result = self.manager.search_books("Nonexistent Title😀", "", "")
+        result = self.manager.search_books("Nonexistent Title😀", "", "","","","","")
         expected = []
         self.assertEqual(result, expected, "Should return an empty list when no match is found")
 
