@@ -15,7 +15,7 @@ To install and set up the Pybrary project, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/pybrary.git
+   git clone https://github.com/PythonDataScience24/pybrary.git
    cd pybrary
    ```
 2. **Run the Application:**
