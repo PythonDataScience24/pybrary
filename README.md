@@ -11,9 +11,8 @@ Pybrary is a Python-based library management system designed to streamline daily
 
 ## Features
 
-- Manually enter books with information such as Title, Author, Publication Date, Genre, Pages, ISBN etc.
+- Manually enter books with information such as Title, Author, Publication Date, Genre, Pages etc.
 - Give books you own a rating from 1 to 5
-- Add books you don't own to your wishlist
 - Search and look through books you own based on any tags associated with them (author, genre etc.)
 - Get an overview with graphs visualizing your library of books
 
@@ -21,7 +20,7 @@ Pybrary is a Python-based library management system designed to streamline daily
 
 #### What is pybrary?
 
-Pybrary is python applet written to help you manage your library of books. It will not only help you organize and look through your existing books, but recommend you new ones just to your needs. You can also get a nice overview of your collection through many different visualizations based on genre, length and many more. 
+Pybrary is python applet written to help you manage your library of books. It will not only help you organize and look through your existing books, so you can statistically evaluate it manually and find new books, which will match your taste. You can also get a nice overview of your collection through many different visualizations based on genre, pages and many more. 
 
 ## Installation & Usage
 
