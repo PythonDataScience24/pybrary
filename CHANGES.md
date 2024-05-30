@@ -15,6 +15,7 @@ In the initial implementation of the Pybrary project, the entire functionality w
    - **LibraryManager**: This class is responsible for all operations related to managing the library data, such as adding, deleting, searching, loading, and saving books.
    - **LibraryGUI**: This class is responsible for creating and managing the graphical user interface (GUI) of the application.
    - **Librarian**: This class handles the storing, deleting and overwriting of books, so it is not done in the GUI directly.
+   - **Pybrary**: This class integrates all the components together.
 
 ### Detailed Changes
 
@@ -26,7 +27,45 @@ In the initial implementation of the Pybrary project, the entire functionality w
   - Add, delete, and search for books.
   - Load and save data to/from a CSV file.
 
-#### 2.Creation of `Librarian` Class
+#### 2. Creation of `Librarian` Class
+
 - **File**: `librarian.py`
 - **Responsibilities**:
-  - call functions of the library_manager when buttons are pressed.
+  - Call functions of the `LibraryManager` when buttons are pressed.
+
+#### 3. Creation of `LibraryGUI` Class
+
+- **File**: `gui.py`
+- **Responsibilities**:
+  - Create and manage the graphical user interface.
+  - Handle user interactions and events.
+
+#### 4. Creation of `Pybrary` Class
+
+- **File**: `pybrary.py`
+- **Responsibilities**:
+  - Integrate all the components (`LibraryManager`, `LibraryGUI`, and `Librarian`) together.
+  - Serve as the entry point for the application.
+
+### Bug Fixes and Improvements
+
+1. **GUI Bug Fixes**:
+   - Fixed the delete button functionality.
+   - Added exception handling to prevent empty fields in Author or Year.
+   - Implemented a pop-up error message for exceptions.
+
+2. **Rating Validation**:
+   - Ensured that the book rating can only be between 1 and 5.
+   - Invalid inputs (including characters in the Year field) are now properly handled.
+
+3. **New Tab for Visualizations**:
+   - Added a new tab with simple visualizations using Matplotlib.
+
+4. **Improved Search Function**:
+   - Enhanced the search functionality to allow searching by pages, author, or genre.
+
+5. **Unit Testing**:
+   - Created a test class `book_test.py` with simple unit tests.
+
+6. **Resizable GUI**:
+   - Made the GUI resizable for better user experience.
