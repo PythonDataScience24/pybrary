@@ -16,10 +16,10 @@ Enable users to search for books based on keywords, authors or genres. Retrieve 
 Provide users with visualizations of their book collection, such as a breakdown of books by topic or rating. Allow users to analyse trends in their book preferences, like the rating per author per year.
 
 ## Possible Goals
-These are features we will strive for, should the main goals be completed ahead of schedule
 
-- Allow intelligent addition/autocompletion of a books metadata through a database.
-- Implement intelligent recommendations through said database.
+- Allow intelligent addition of a books metadata into a csv.
+- Easy to use implementation of an GUI which is straight forward.
+- Provide a tool for users to evaluate manually books and recommendations.
 
 ## Contributing
 Refer to [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](code_of_conduct.md) before contributing. For a more detailed breakdown of tasks to be completed, check the [project board](https://github.com/orgs/PythonDataScience24/projects/2).
